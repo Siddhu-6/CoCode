@@ -1,9 +1,9 @@
 # CoCode – Real-Time Collaborative Code Editor
 
-**Course:** Software Project Management (SPM), IIIT Vadodara
-**Project topic:** Improving Team-Based Software Development Through Real-Time Code Collaboration
-**Project link:** https://github.com/Siddhu-6/CoCode
-**Live app:** https://cocode-zcgp.onrender.com
+- **Course:** Software Project Management (SPM), IIIT Vadodara
+- **Project topic:** Improving Team-Based Software Development Through Real-Time Code Collaboration
+- **GitHub:** https://github.com/Siddhu-6/CoCode
+- **Live app:** https://cocode-zcgp.onrender.com
 
 ## Team
 
