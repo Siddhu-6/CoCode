@@ -26,7 +26,7 @@ export const executeCode = (req, res) => {
     switch (language) {
         case "python":
             filename = path.join(tempDir, "script.py");
-            command = "python";
+            command = process.env.PYTHON_CMD || (process.platform === "win32" ? "python" : "python3");
             args = [filename];
             break;
         case "java":

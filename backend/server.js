@@ -2,6 +2,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import { createServer } from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import connectDB from './config/connectToDatabase.js';
 import { authRoutes } from './routes/auth.routes.js';
 import { codeRoutes } from './routes/code.routes.js';
@@ -25,6 +28,16 @@ app.use(cors(corsOption));
 app.use('/auth', authRoutes);
 app.use('/rooms', roomRoutes);
 app.use('/code', codeRoutes);
+app.get('/health', (req, res) => res.send('ok'));
+
+const publicDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'public');
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir));
+  app.use((req, res, next) => {
+    if (req.method !== 'GET') return next();
+    res.sendFile(path.join(publicDir, 'index.html'));
+  });
+}
 
 initSocket(server);
 const PORT = process.env.PORT || 5000;

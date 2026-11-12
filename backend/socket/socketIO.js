@@ -5,7 +5,7 @@ import { Message } from "../modules/Message.js"; // Import Message model
 export const initSocket = (server) => { 
     const io = new Server(server, {
         cors: {
-            origin: "http://localhost:5173",
+            origin: (process.env.FRONTEND_URL || "http://localhost:5173").split(",").map((u) => u.trim()),
             methods: ["GET", "POST", "PUT"],
         },
     });

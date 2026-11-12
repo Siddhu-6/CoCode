@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: cocode
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: VITE_GEMINI_API_KEY
+        sync: false
+      - key: JWT_KEY
+        generateValue: true

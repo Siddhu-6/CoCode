@@ -7,3 +7,4 @@ backend/tmp/
 .DS_Store
 .vscode/
 .idea/
+backend/public/

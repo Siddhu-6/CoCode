@@ -3,6 +3,7 @@
 **Course:** Software Project Management (SPM), IIIT Vadodara
 **Project topic:** Improving Team-Based Software Development Through Real-Time Code Collaboration
 **Project link:** https://github.com/Siddhu-6/CoCode
+**Live app:** [your-render-link]
 
 ## Team
 
@@ -107,9 +108,17 @@ npm run dev
 
 Open `http://localhost:5173`.
 
-Notes:
-- The Vite dev server proxies `/api` (including the Socket.IO connection) to `http://localhost:3000`.
-- REST calls use the `baseURL` in `frontend/src/api/client.js`. It points to the deployed backend; change it to `http://localhost:3000/` to run fully locally.
+Leave `VITE_API_URL` empty for local use: the Vite dev server proxies `/api` (REST and Socket.IO) to `http://localhost:3000`.
+
+## Deployment
+
+The whole app runs as one Render web service. The root `Dockerfile` builds the React frontend, copies it into the backend, and the Express server serves both the app and the API from the same URL. It also installs `python3`, `gcc` and `g++` so code execution works on the server.
+
+1. Create a free MongoDB Atlas cluster, allow network access from `0.0.0.0/0`, and copy the connection string.
+2. On Render: **New → Blueprint**, pick this repository. `render.yaml` sets up the service.
+3. Enter `MONGO_URI` and `VITE_GEMINI_API_KEY` when asked (`JWT_KEY` is generated), then **Apply**.
+
+Health check: `/health`. On the free plan the service sleeps after 15 minutes without traffic, so the first request after that can take up to a minute.
 
 ## Known limitations
 
