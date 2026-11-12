@@ -3,9 +3,9 @@ import { aiService } from "@/services/ai.service";
 import { toast } from "react-toastify";
 
 export const Code = ({ code, setCode, language, setLanguage, filename }) => {
-    const handleGeminiSuggestion = async () => {
+    const handleAiSuggestion = async () => {
         try {
-            const suggestion = await aiService.suggestCode(code);
+            const suggestion = await aiService.suggestCode(code, language);
 
             const cleaned = suggestion
                 .replace(/```[\s\S]*?```/g, (match) => {
@@ -19,7 +19,7 @@ export const Code = ({ code, setCode, language, setLanguage, filename }) => {
                 setCode(cleaned);
             }
         } catch (err) {
-            toast.error(err?.message || "AI suggestion failed");
+            toast.error(err?.response?.data?.message || err?.message || "AI suggestion failed");
         }
     };
 
@@ -44,7 +44,7 @@ export const Code = ({ code, setCode, language, setLanguage, filename }) => {
                 </div>
 
                 <button
-                    onClick={handleGeminiSuggestion}
+                    onClick={handleAiSuggestion}
                     className="px-6 py-2 rounded-lg bg-gradient-to-r from-[#FF0099] to-[#1E90FF] text-[#FFFFFF] font-bold hover:from-[#FF0099]/90 hover:to-[#1E90FF]/90 hover:shadow-lg hover:shadow-[#FF0099]/25 transform hover:-translate-y-0.5 transition-all duration-300"
                 >
                     ✨ AI Suggestion

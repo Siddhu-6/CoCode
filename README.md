@@ -28,7 +28,7 @@ CoCode puts all of that in one browser tab. A user creates a room, shares the Ro
 - **Auto-save** – every change to an open file is written back to the database
 - **Room chat** – messages are stored per room, so people who join late see the earlier conversation
 - **Run code** – JavaScript, Python, C and C++ can be executed from the editor, with output shown in the console panel
-- **AI suggestion** – sends the current code to Google Gemini and puts the completed code back in the editor
+- **AI suggestion** – the backend sends the current code and language to Groq (GPT-OSS 120B) and puts the completed code back in the editor
 - **Accounts** – sign up / log in with hashed passwords (bcrypt) and JWT tokens; editor and room pages are protected routes
 - **Collaborator list** – shows who has joined the room
 
@@ -48,7 +48,7 @@ CoCode puts all of that in one browser tab. A user creates a room, shares the Ro
 - `child_process` for compiling/running Python, C and C++; Node `vm` for JavaScript
 
 **AI**
-- Google Gemini API
+- Groq API, model `openai/gpt-oss-120b` (called from the backend)
 
 ## Project structure
 
@@ -87,6 +87,7 @@ Create `backend/.env`:
 MONGO_URI=your_mongodb_connection_string
 PORT=3000
 JWT_KEY=your_jwt_secret
+GROQ_API_KEY=your_groq_api_key
 ```
 
 ```bash
@@ -97,11 +98,8 @@ npm run dev
 
 **Frontend**
 
-Create `frontend/.env` from the example and add your Gemini key:
-
 ```bash
 cd frontend
-cp .env.example .env     # set VITE_GEMINI_API_KEY
 npm install
 npm run dev
 ```
@@ -116,7 +114,7 @@ The whole app runs as one Render web service. The root `Dockerfile` builds the R
 
 1. Create a free MongoDB Atlas cluster, allow network access from `0.0.0.0/0`, and copy the connection string.
 2. On Render: **New → Blueprint**, pick this repository. `render.yaml` sets up the service.
-3. Enter `MONGO_URI` and `VITE_GEMINI_API_KEY` when asked (`JWT_KEY` is generated), then **Apply**.
+3. Enter `MONGO_URI` and `GROQ_API_KEY` when asked (`JWT_KEY` is generated), then **Apply**.
 
 Health check: `/health`. On the free plan the service sleeps after 15 minutes without traffic, so the first request after that can take up to a minute.
 
@@ -125,13 +123,13 @@ Health check: `/health`. On the free plan the service sleeps after 15 minutes wi
 - Code sync sends the whole file on every change, so if two people type at the exact same moment the last update wins. There is no OT/CRDT merge yet.
 - Auto-save calls the API on every keystroke (no debounce).
 - Code execution is not sandboxed for Python/C/C++, uses fixed temp file names, and has no stdin support.
-- The Gemini key is read on the frontend, and the AI prompt currently asks for JavaScript regardless of the selected language.
+- Socket.IO rooms live in one server's memory, so running more than one server instance would need a Redis adapter.
 - The auth middleware is not yet applied to the room/file routes.
 
 ## Future scope
 
 - Conflict-free editing with Yjs (CRDT) and live cursors per user
 - Run code inside Docker containers with time/memory limits and stdin input
-- Move AI calls to the backend and make them language-aware
+- Rate limits on AI and Run requests; Redis adapter to scale beyond one server
 - Role-based access in rooms (owner / editor / viewer)
 - Git integration, version history and voice/video in rooms
